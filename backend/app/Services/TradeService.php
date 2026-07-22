@@ -46,7 +46,7 @@ class TradeService
             throw new RuntimeException('Saldo em BTC insuficiente.');
         }
 
-        $amountBrl = bcmul($amountBtc, $btcPrice, 2);
+        $amountBrl = number_format(round((float) $amountBtc * (float) $btcPrice, 2), 2, '.', '');
 
         return DB::transaction(function () use ($user, $wallet, $amountBtc, $amountBrl, $btcPrice) {
             $wallet->balance_btc = bcsub($wallet->balance_btc, $amountBtc, 8);

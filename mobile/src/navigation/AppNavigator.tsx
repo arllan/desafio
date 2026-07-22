@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useAppTheme } from '../contexts/ThemeContext';
+import { WalletProvider } from '../contexts/WalletContext';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import DashboardScreen from '../screens/DashboardScreen';
@@ -36,18 +37,20 @@ function AppNavigator() {
   const { colors } = useAppTheme();
 
   return (
-    <AppStack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.bg },
-        headerTintColor: colors.text,
-        headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: '700', color: colors.text },
-      }}
-    >
-      <AppStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
-      <AppStack.Screen name="Trade" component={TradeScreen} options={{ title: 'Comprar / Vender' }} />
-      <AppStack.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
-    </AppStack.Navigator>
+    <WalletProvider>
+      <AppStack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.bg },
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
+          headerTitleStyle: { fontWeight: '700', color: colors.text },
+        }}
+      >
+        <AppStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
+        <AppStack.Screen name="Trade" component={TradeScreen} options={{ title: 'Comprar / Vender' }} />
+        <AppStack.Screen name="History" component={HistoryScreen} options={{ title: 'Histórico' }} />
+      </AppStack.Navigator>
+    </WalletProvider>
   );
 }
 

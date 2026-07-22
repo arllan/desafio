@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
-import { SegmentedButtons, Text, TextInput } from 'react-native-paper';
+import { SegmentedButtons, Text } from 'react-native-paper';
 import { Skeleton } from '../components/Skeleton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -12,24 +12,13 @@ import { useAppTheme } from '../contexts/ThemeContext';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'History'>;
 
-export default function HistoryScreen(_props: Props) {
+export default function HistoryScreen({ navigation: _navigation }: Props) {
   const { colors } = useAppTheme();
   const { transactions, loading, error, refresh, filters, applyFilters } = useTransactionHistory();
 
-  const [minAmount, setMinAmount] = useState('');
-
-  function handleTypeChange(value: string) {
+  const handleTypeChange = useCallback((value: string) => {
     applyFilters({ ...filters, type: value as TransactionTypeFilter });
-  }
-
-  function handleAmountSubmit() {
-    applyFilters({ ...filters, minAmount });
-  }
-
-  function handleAmountClear() {
-    setMinAmount('');
-    applyFilters({ ...filters, minAmount: '' });
-  }
+  }, [filters, applyFilters]);
 
   if (loading && transactions.length === 0) {
     return (
@@ -41,6 +30,7 @@ export default function HistoryScreen(_props: Props) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['bottom']}>
+
       <View style={[styles.filterBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <SegmentedButtons
           value={filters.type}
@@ -66,24 +56,6 @@ export default function HistoryScreen(_props: Props) {
             },
           ]}
           style={{ backgroundColor: colors.card2, borderRadius: 10 }}
-        />
-
-        <TextInput
-          label="Valor mínimo (R$)"
-          keyboardType="numeric"
-          value={minAmount}
-          onChangeText={setMinAmount}
-          onSubmitEditing={handleAmountSubmit}
-          onBlur={handleAmountSubmit}
-          right={
-            minAmount
-              ? <TextInput.Icon icon="close-circle" onPress={handleAmountClear} color={colors.textSecondary} />
-              : <TextInput.Icon icon="magnify" color={colors.textSecondary} />
-          }
-          style={{ backgroundColor: colors.card2, marginTop: 10 }}
-          textColor={colors.text}
-          theme={{ colors: { onSurfaceVariant: colors.textSecondary } }}
-          dense
         />
       </View>
 
@@ -115,7 +87,6 @@ export default function HistoryScreen(_props: Props) {
             </View>
           ) : (
             <View style={[styles.centered, { backgroundColor: colors.bg }]}>
-              <Text style={styles.emptyIcon}>📋</Text>
               <Text style={[styles.emptyTitle, { color: colors.text }]}>Nenhuma transação</Text>
               <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
                 Nenhum resultado para os filtros aplicados
@@ -124,6 +95,7 @@ export default function HistoryScreen(_props: Props) {
           )
         }
         contentContainerStyle={styles.listContent}
+        style={{ flex: 1 }}
       />
     </SafeAreaView>
   );
@@ -161,9 +133,6 @@ const styles = StyleSheet.create({
   errorBox: {
     borderBottomWidth: 1,
     padding: 12,
-  },
-  emptyIcon: {
-    fontSize: 48,
   },
   emptyTitle: {
     fontSize: 18,

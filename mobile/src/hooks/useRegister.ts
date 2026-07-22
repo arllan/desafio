@@ -25,7 +25,11 @@ export function useRegister() {
 
     if (!name.trim()) newErrors.name = 'Informe o seu nome.';
     if (!email.trim()) newErrors.email = 'Informe o seu e-mail.';
-    if (!password) newErrors.password = 'Informe uma senha.';
+    if (!password) {
+      newErrors.password = 'Informe uma senha.';
+    } else if (password.length < 8) {
+      newErrors.password = 'A senha deve ter no mínimo 8 caracteres.';
+    }
     if (!passwordConfirmation) {
       newErrors.passwordConfirmation = 'Confirme a sua senha.';
     } else if (password && password !== passwordConfirmation) {

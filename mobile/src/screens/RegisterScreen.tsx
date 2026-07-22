@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +19,8 @@ export default function RegisterScreen({ navigation }: Props) {
     loading, errors, submit,
   } = useRegister();
   const { colors } = useAppTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -73,11 +76,17 @@ export default function RegisterScreen({ navigation }: Props) {
                 label="Senha"
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 style={{ backgroundColor: colors.card }}
                 textColor={colors.text}
                 error={!!errors.password}
                 theme={{ colors: { onSurfaceVariant: colors.textSecondary } }}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? 'eye-off' : 'eye'}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
               />
               <HelperText type="error" visible={!!errors.password}>
                 {errors.password}
@@ -89,11 +98,17 @@ export default function RegisterScreen({ navigation }: Props) {
                 label="Confirmar senha"
                 value={passwordConfirmation}
                 onChangeText={setPasswordConfirmation}
-                secureTextEntry
+                secureTextEntry={!showConfirmation}
                 style={{ backgroundColor: colors.card }}
                 textColor={colors.text}
                 error={!!errors.passwordConfirmation}
                 theme={{ colors: { onSurfaceVariant: colors.textSecondary } }}
+                right={
+                  <TextInput.Icon
+                    icon={showConfirmation ? 'eye-off' : 'eye'}
+                    onPress={() => setShowConfirmation(!showConfirmation)}
+                  />
+                }
               />
               <HelperText type="error" visible={!!errors.passwordConfirmation}>
                 {errors.passwordConfirmation}

@@ -24,9 +24,17 @@ export async function register(
   return data;
 }
 
+const TOUR_KEYS = ['dashboard_tour_seen', 'trade_tour_seen', 'history_tour_seen'];
+
 export async function logout(): Promise<void> {
-  await api.post('/logout');
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+  try {
+    await api.post('/logout');
+  } catch {
+    // ignora erros de rede — o logout local prossegue de qualquer forma
+  } finally {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await Promise.all(TOUR_KEYS.map((k) => SecureStore.deleteItemAsync(k)));
+  }
 }
 
 export async function getStoredToken(): Promise<string | null> {

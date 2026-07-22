@@ -7,6 +7,13 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', fn () => response()->json([
+    'app'     => 'BitTrade API',
+    'version' => '1.0.0',
+    'status'  => 'online',
+    'docs'    => url('/docs/api'),
+]));
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 

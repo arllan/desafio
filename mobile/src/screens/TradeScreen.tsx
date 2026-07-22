@@ -1,5 +1,6 @@
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
-import { Button, SegmentedButtons, Text, TextInput } from 'react-native-paper';
+import { Button, Snackbar, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../navigation/AppNavigator';
@@ -10,7 +11,7 @@ import { layout } from '../theme/layout';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Trade'>;
 
-export default function TradeScreen(_props: Props) {
+export default function TradeScreen({ navigation: _navigation }: Props) {
   const { colors } = useAppTheme();
   const { balanceBtc, rawBalanceBtc } = useWallet();
   const {
@@ -22,6 +23,33 @@ export default function TradeScreen(_props: Props) {
   } = useTrade();
 
   const isBuy = mode === 'buy';
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const handleUseAll = useCallback(() => setAmount(rawBalanceBtc), [rawBalanceBtc, setAmount]);
+
+  const handleSubmit = useCallback(() => {
+    if (amount === '') {
+      setToastMessage(isBuy ? 'Digite o valor em Reais para comprar.' : 'Digite a quantidade de BTC para vender.');
+      setToastVisible(true);
+      return;
+    }
+    const numAmount = parseFloat(amount);
+    if (numAmount <= 0) {
+      setToastMessage('O valor deve ser maior que zero.');
+      setToastVisible(true);
+      return;
+    }
+    if (!isBuy) {
+      const balance = parseFloat(rawBalanceBtc);
+      if (numAmount > balance) {
+        setToastMessage('Saldo insuficiente de Bitcoin para realizar a venda.');
+        setToastVisible(true);
+        return;
+      }
+    }
+    submit();
+  }, [amount, isBuy, rawBalanceBtc, submit]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['bottom']}>
@@ -35,29 +63,31 @@ export default function TradeScreen(_props: Props) {
       )}
 
       <View style={[styles.container, layout.isTablet && styles.containerTablet]}>
-        <SegmentedButtons
-          value={mode}
-          onValueChange={(v: string) => setMode(v as 'buy' | 'sell')}
-          buttons={[
-            {
-              value: 'buy',
-              label: 'Comprar',
-              style: isBuy ? { backgroundColor: colors.buy } : { backgroundColor: 'transparent' },
-              labelStyle: { color: isBuy ? '#fff' : colors.textSecondary, fontWeight: '700' },
-            },
-            {
-              value: 'sell',
-              label: 'Vender',
-              style: !isBuy ? { backgroundColor: colors.sell } : { backgroundColor: 'transparent' },
-              labelStyle: { color: !isBuy ? '#fff' : colors.textSecondary, fontWeight: '700' },
-            },
-          ]}
-          style={{ backgroundColor: colors.card, borderRadius: 12 }}
-        />
 
-        <View style={[styles.priceRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.priceLabel, { color: colors.textSecondary }]}>Cotação atual</Text>
-          <Text style={[styles.priceValue, { color: colors.accent }]}>{btcPrice}</Text>
+        <View style={styles.modeBlock}>
+          <SegmentedButtons
+            value={mode}
+            onValueChange={(v: string) => setMode(v as 'buy' | 'sell')}
+            buttons={[
+              {
+                value: 'buy',
+                label: 'Comprar',
+                style: isBuy ? { backgroundColor: colors.buy } : { backgroundColor: 'transparent' },
+                labelStyle: { color: isBuy ? '#fff' : colors.textSecondary, fontWeight: '700' },
+              },
+              {
+                value: 'sell',
+                label: 'Vender',
+                style: !isBuy ? { backgroundColor: colors.sell } : { backgroundColor: 'transparent' },
+                labelStyle: { color: !isBuy ? '#fff' : colors.textSecondary, fontWeight: '700' },
+              },
+            ]}
+            style={{ backgroundColor: colors.card, borderRadius: 12 }}
+          />
+          <View style={[styles.priceRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.priceLabel, { color: colors.textSecondary }]}>Cotação atual</Text>
+            <Text style={[styles.priceValue, { color: colors.accent }]}>{btcPrice}</Text>
+          </View>
         </View>
 
         {!isBuy && (
@@ -67,8 +97,8 @@ export default function TradeScreen(_props: Props) {
               <Text style={[styles.balanceValue, { color: colors.text }]}>{balanceBtc}</Text>
             </View>
             <Pressable
-              style={({ pressed }) => [styles.useAllBtn, { backgroundColor: `${colors.sell}20`, borderColor: colors.sell, opacity: pressed ? 0.7 : 1 }]}
-              onPress={() => setAmount(rawBalanceBtc)}
+              style={({ pressed }: { pressed: boolean }) => [styles.useAllBtn, { backgroundColor: `${colors.sell}20`, borderColor: colors.sell, opacity: pressed ? 0.7 : 1 }]}
+              onPress={handleUseAll}
             >
               <Text style={[styles.useAllText, { color: colors.sell }]}>Usar tudo</Text>
             </Pressable>
@@ -88,9 +118,7 @@ export default function TradeScreen(_props: Props) {
 
           {preview !== '' && (
             <View style={[styles.previewBox, { backgroundColor: colors.card2 }]}>
-              <Text style={[styles.previewLabel, { color: colors.textSecondary }]}>
-                {isBuy ? 'Você vai receber' : 'Você vai receber'}
-              </Text>
+              <Text style={[styles.previewLabel, { color: colors.textSecondary }]}>Você vai receber</Text>
               <Text style={[styles.previewValue, { color: colors.text }]}>{preview}</Text>
             </View>
           )}
@@ -112,18 +140,30 @@ export default function TradeScreen(_props: Props) {
           </View>
         )}
 
-        <Button
-          mode="contained"
-          onPress={submit}
-          loading={loading}
-          disabled={loading || amount === ''}
-          style={[styles.button, { backgroundColor: isBuy ? colors.buy : colors.sell }]}
-          contentStyle={styles.buttonContent}
-          labelStyle={styles.buttonLabel}
-        >
-          {isBuy ? 'Comprar Bitcoin' : 'Vender Bitcoin'}
-        </Button>
+        <View style={{ marginTop: 'auto' }}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            loading={loading}
+            disabled={loading}
+            style={[styles.button, { backgroundColor: isBuy ? colors.buy : colors.sell }]}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+          >
+            {isBuy ? 'Comprar Bitcoin' : 'Vender Bitcoin'}
+          </Button>
+        </View>
+
       </View>
+
+      <Snackbar
+        visible={toastVisible}
+        onDismiss={() => setToastVisible(false)}
+        duration={2500}
+        style={{ backgroundColor: colors.card2 }}
+      >
+        <Text style={{ color: colors.text }}>{toastMessage}</Text>
+      </Snackbar>
     </SafeAreaView>
   );
 }
@@ -150,6 +190,9 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: 'center' as const,
     width: '100%',
+  },
+  modeBlock: {
+    gap: 16,
   },
   priceRow: {
     borderRadius: 12,
@@ -221,7 +264,6 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 12,
-    marginTop: 'auto',
   },
   buttonContent: {
     height: 52,

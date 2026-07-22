@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class MarketService
 {
     private const CACHE_KEY = 'btc_price';
-    private const CACHE_TTL = 30;
+    private const CACHE_TTL = 600;
 
     public function getBtcPrice(): string
     {

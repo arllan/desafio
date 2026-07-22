@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +13,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 export default function LoginScreen({ navigation }: Props) {
   const { email, setEmail, password, setPassword, loading, errors, submit } = useLogin();
   const { colors } = useAppTheme();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -46,11 +48,17 @@ export default function LoginScreen({ navigation }: Props) {
                 label="Senha"
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 style={{ backgroundColor: colors.card }}
                 textColor={colors.text}
                 error={!!errors.password}
                 theme={{ colors: { onSurfaceVariant: colors.textSecondary } }}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? 'eye-off' : 'eye'}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
               />
               <HelperText type="error" visible={!!errors.password}>
                 {errors.password}

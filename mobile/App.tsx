@@ -1,8 +1,9 @@
 import { View } from 'react-native';
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { CopilotProvider } from 'react-native-copilot';
+import { TourTooltip } from './src/components/TourTooltip';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ThemeProvider, useAppTheme } from './src/contexts/ThemeContext';
-import { WalletProvider } from './src/contexts/WalletContext';
 import RootNavigator from './src/navigation/AppNavigator';
 import { OfflineBanner } from './src/components/OfflineBanner';
 
@@ -23,14 +24,20 @@ function ThemedApp() {
 
   return (
     <PaperProvider theme={paperTheme}>
-      <View style={{ flex: 1 }}>
-        <AuthProvider>
-          <WalletProvider>
+      <CopilotProvider
+        animated
+        backdropColor="rgba(0,0,0,0.75)"
+        tooltipComponent={TourTooltip}
+        stepNumberComponent={() => null}
+        labels={{ finish: 'Concluir', next: 'Próximo', skip: 'Pular', previous: 'Anterior' }}
+      >
+        <View style={{ flex: 1 }}>
+          <AuthProvider>
             <RootNavigator />
-          </WalletProvider>
-        </AuthProvider>
-        <OfflineBanner />
-      </View>
+          </AuthProvider>
+          <OfflineBanner />
+        </View>
+      </CopilotProvider>
     </PaperProvider>
   );
 }

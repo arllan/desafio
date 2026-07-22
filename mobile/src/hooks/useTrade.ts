@@ -63,11 +63,13 @@ export function useTrade(): UseTradeReturn {
     }
 
     if (mode === 'buy') {
-      const btc = numAmount / numPrice;
+      // Trunca em 8 casas decimais igual ao bcdiv do backend
+      const btc = Math.floor((numAmount / numPrice) * 1e8) / 1e8;
       return `≈ ${formatBTC(btc)}`;
     }
 
-    const brl = numAmount * numPrice;
+    // Arredonda em 2 casas decimais igual ao backend
+    const brl = Math.round(numAmount * numPrice * 100) / 100;
     return `≈ ${formatBRL(brl)}`;
   }, [amount, rawPrice, mode]);
 
