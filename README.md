@@ -13,9 +13,100 @@ Backend em **Laravel 12** · Mobile em **Expo / React Native** · Banco **MySQL*
 
 ---
 
+## Como testar o projeto
+
+Existem duas formas de testar — escolha a mais conveniente:
+
+---
+
+### Opção 1 — APK + Ambiente de produção (mais rápido, sem configuração)
+
+> Recomendado para quem só quer ver o app funcionando.
+
+**1. Baixe e instale o APK**
+
+Acesse a página de releases do repositório e baixe o arquivo `.apk`:
+
+👉 [github.com/arllan/desafio/releases](https://github.com/arllan/desafio/releases)
+
+No Android: habilite **"Instalar de fontes desconhecidas"** nas configurações e abra o arquivo para instalar.
+
+**2. O app já aponta para o ambiente de produção**
+
+A API está disponível em:
+```
+https://desafio-production-2296.up.railway.app/api
+```
+
+Basta abrir o app, criar uma conta e usar. Nenhuma configuração necessária.
+
+---
+
+### Opção 2 — Ambiente local (backend + app)
+
+> Para testar com backend local e ver logs em tempo real.
+
+**Pré-requisitos:** Docker Desktop e Node.js instalados.
+
+**1. Suba o backend**
+
+```bash
+cd desafio/backend
+docker compose up -d
+```
+
+O backend sobe automaticamente na porta **8000** com banco e Redis inclusos.
+
+**2. Descubra seu IP local**
+
+```bash
+# Mac
+ipconfig getifaddr en0
+
+# Windows
+ipconfig
+# procure pelo "Endereço IPv4"
+```
+
+**3. Aponte o app para o backend local**
+
+Abra `mobile/src/services/api.ts` e troque a URL:
+
+```ts
+export const API_URL = 'http://SEU_IP_LOCAL:8000/api';
+// Exemplo: 'http://192.168.1.100:8000/api'
+```
+
+> Celular e computador precisam estar na **mesma rede Wi-Fi**.
+
+**4. Rode o app**
+
+```bash
+cd desafio/mobile
+npm install
+npx expo start
+```
+
+Escaneie o QR code com o **Expo Go** (disponível na App Store e Google Play).
+
+**5. Verifique se está tudo funcionando**
+
+- API: [http://localhost:8000/api](http://localhost:8000/api)
+- Swagger: [http://localhost:8000/docs/api](http://localhost:8000/docs/api)
+- Banco (Adminer): [http://localhost:8080](http://localhost:8080)
+
+**Zerar os dados para novo teste:**
+
+```bash
+cd backend
+docker compose down -v && docker compose up -d
+```
+
+---
+
 ## Sumário
 
-- [Demonstração em vídeo](#demonstração-em-vídeo)
+- [Como testar o projeto](#como-testar-o-projeto)
 - [Antes de começar](#antes-de-começar--instale-o-necessário)
 - [Rodando localmente com Docker](#rodando-localmente-com-docker)
 - [Deploy no Railway (produção)](#deploy-no-railway-produção)
