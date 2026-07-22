@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { IconButton, Snackbar, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,14 +27,10 @@ export default function DashboardScreen({ navigation }: Props) {
   const { visible: tourVisible } = useCopilot();
   const scrollRef = useRef<ScrollView>(null);
 
-  useEffect(() => {
-    if (walletLoading) return;
-    const timer = setTimeout(() => {
-      scrollRef.current?.scrollTo({ y: 0, animated: false });
-      startTour();
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [walletLoading]);
+  const handleStartTour = useCallback(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+    setTimeout(() => startTour(), 100);
+  }, [startTour]);
 
   const handleSignOut = useCallback(() => signOut(), [signOut]);
   const handleNavigateTrade = useCallback(() => navigation.navigate('Trade'), [navigation]);
@@ -59,7 +55,7 @@ export default function DashboardScreen({ navigation }: Props) {
             <Text style={[styles.subGreeting, { color: colors.textSecondary }]}>Bem-vindo de volta</Text>
           </View>
           <View style={styles.headerActions}>
-            <IconButton icon="help-circle-outline" iconColor={colors.textSecondary} size={22} onPress={startTour} />
+            <IconButton icon="help-circle-outline" iconColor={colors.textSecondary} size={22} onPress={handleStartTour} />
             <IconButton icon={isDark ? 'weather-sunny' : 'weather-night'} iconColor={colors.textSecondary} size={22} onPress={toggleTheme} />
             <IconButton icon="logout" iconColor={colors.textSecondary} size={22} onPress={handleSignOut} />
           </View>
