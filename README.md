@@ -155,11 +155,12 @@ O Railway vai detectar o Dockerfile automaticamente em `docker/php/Dockerfile`.
 
 Na aba **"Variables"** do serviço da API, adicione as seguintes variáveis. Os valores de banco e Redis vêm das abas dos serviços MySQL e Redis que você criou:
 
-| Variável | Onde encontrar o valor |
-|----------|----------------------|
+| Variável | Valor |
+|----------|-------|
+| `APP_NAME` | `BitTrade` |
 | `APP_ENV` | `production` |
 | `APP_DEBUG` | `false` |
-| `APP_KEY` | Veja instrução abaixo |
+| `APP_KEY` | `base64:zWiFb7K7KtQIfVQuM7sLyvkH5tOtvZK//BHRIT5SLtY=` |
 | `APP_URL` | URL gerada pelo Railway (ex: `https://seu-app.railway.app`) |
 | `DB_CONNECTION` | `mysql` |
 | `DB_HOST` | Aba "Variables" do serviço MySQL → `MYSQLHOST` |
@@ -174,17 +175,6 @@ Na aba **"Variables"** do serviço da API, adicione as seguintes variáveis. Os 
 | `SESSION_DRIVER` | `redis` |
 
 > **Dica:** O Railway tem uma funcionalidade de "Reference Variable" que preenche automaticamente os valores dos outros serviços. Clique no campo da variável e selecione a referência correspondente.
-
-**5. Gere o APP_KEY:**
-
-O `APP_KEY` é uma chave secreta do Laravel. Para gerar, rode localmente:
-
-```bash
-cd backend
-docker exec desafio_app php artisan key:generate --show
-```
-
-Copie o valor que aparecer (começa com `base64:`) e cole na variável `APP_KEY` no Railway.
 
 **6. Faça o deploy**
 
