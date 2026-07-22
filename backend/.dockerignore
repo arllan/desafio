@@ -1,0 +1,32 @@
+# Dependências (reinstaladas durante o build)
+vendor/
+node_modules/
+
+# Ambiente local — Railway usa variáveis de ambiente direto no painel
+.env
+.env.*
+!.env.example
+
+# Testes (não são necessários em produção)
+tests/
+
+# Cache e logs gerados em runtime
+storage/logs/*.log
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/framework/views/
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Docker Compose (só para uso local, não vai para a imagem)
+docker-compose.yml
+docker-compose.*.yml
