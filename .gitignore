@@ -29,3 +29,7 @@ mobile/dist/
 .cursor/
 .zed/
 .nova/
+
+# Outros
+backend/desafio_db
+teste_laravel_react_native.pdf

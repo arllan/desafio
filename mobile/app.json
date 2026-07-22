@@ -25,6 +25,12 @@
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "972829b3-747a-415f-8ead-a1399dbe4859"
+      }
+    },
+    "owner": "arllan"
   }
 }

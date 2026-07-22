@@ -1,5 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCopilot, type TooltipProps } from 'react-native-copilot';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const TOOLTIP_WIDTH = Math.min(Math.max(SCREEN_WIDTH * 0.78, 260), 360);
 
 export function TourTooltip({ labels }: TooltipProps) {
   const { goToNext, goToPrev, stop, currentStep, isFirstStep, isLastStep } = useCopilot();
@@ -38,12 +41,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    minWidth: 260,
-    maxWidth: 320,
+    width: TOOLTIP_WIDTH,
   },
   text: {
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: SCREEN_WIDTH < 360 ? 13 : 14,
+    lineHeight: SCREEN_WIDTH < 360 ? 19 : 21,
     color: '#1A1A1A',
     marginBottom: 16,
   },
@@ -62,29 +64,29 @@ const styles = StyleSheet.create({
   },
   skipText: {
     color: '#888888',
-    fontSize: 13,
+    fontSize: SCREEN_WIDTH < 360 ? 12 : 13,
   },
   outlineButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: SCREEN_WIDTH < 360 ? 6 : 8,
+    paddingHorizontal: SCREEN_WIDTH < 360 ? 10 : 14,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#F7931A',
   },
   outlineText: {
     color: '#F7931A',
-    fontSize: 13,
+    fontSize: SCREEN_WIDTH < 360 ? 12 : 13,
     fontWeight: '600',
   },
   primaryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SCREEN_WIDTH < 360 ? 6 : 8,
+    paddingHorizontal: SCREEN_WIDTH < 360 ? 12 : 16,
     borderRadius: 8,
     backgroundColor: '#F7931A',
   },
   primaryText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: SCREEN_WIDTH < 360 ? 12 : 13,
     fontWeight: '700',
   },
 });

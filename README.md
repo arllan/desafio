@@ -31,6 +31,8 @@ Acesse a página de releases do repositório e baixe o arquivo `.apk`:
 
 No Android: habilite **"Instalar de fontes desconhecidas"** nas configurações e abra o arquivo para instalar.
 
+> O APK foi gerado via **EAS Build** (Expo). O arquivo de configuração `mobile/eas.json` já está no repositório. Para gerar um novo APK: instale o `eas-cli` (`npm install -g eas-cli`), faça login com `eas login` e rode `eas build --platform android --profile preview` dentro da pasta `mobile/`.
+
 **2. O app já aponta para o ambiente de produção**
 
 A API está disponível em:

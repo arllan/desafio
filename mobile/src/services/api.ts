@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-export const API_URL = 'http://192.168.1.113:8000/api';
+export const API_URL = 'https://desafio-production-2296.up.railway.app/api';
 
 export const TOKEN_KEY = 'auth_token';
 
