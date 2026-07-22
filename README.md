@@ -5,8 +5,17 @@ Backend em **Laravel 12** · Mobile em **Expo / React Native** · Banco **MySQL*
 
 ---
 
+## Demonstração em vídeo
+
+[![Demonstração do aplicativo](https://img.youtube.com/vi/fPnEsoJBEJA/0.jpg)](https://youtu.be/fPnEsoJBEJA)
+
+> Clique na imagem acima para assistir à demonstração completa do aplicativo no YouTube.
+
+---
+
 ## Sumário
 
+- [Demonstração em vídeo](#demonstração-em-vídeo)
 - [Antes de começar](#antes-de-começar--instale-o-necessário)
 - [Rodando localmente com Docker](#rodando-localmente-com-docker)
 - [Deploy no Railway (produção)](#deploy-no-railway-produção)
