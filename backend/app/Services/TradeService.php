@@ -13,16 +13,16 @@ class TradeService
 
     public function buy(User $user, string $amountBrl): Transaction
     {
-        $btcPrice = $this->marketService->getBtcPrice();
-        $wallet   = $user->wallet;
-
-        if (bccomp($wallet->balance_brl, $amountBrl, 2) < 0) {
-            throw new RuntimeException('Saldo em reais insuficiente.');
-        }
-
+        $btcPrice  = $this->marketService->getBtcPrice();
         $amountBtc = bcdiv($amountBrl, $btcPrice, 8);
 
-        return DB::transaction(function () use ($user, $wallet, $amountBrl, $amountBtc, $btcPrice) {
+        return DB::transaction(function () use ($user, $amountBrl, $amountBtc, $btcPrice) {
+            $wallet = $user->wallet()->lockForUpdate()->first();
+
+            if (bccomp($wallet->balance_brl, $amountBrl, 2) < 0) {
+                throw new RuntimeException('Saldo em reais insuficiente.');
+            }
+
             $wallet->balance_brl = bcsub($wallet->balance_brl, $amountBrl, 2);
             $wallet->balance_btc = bcadd($wallet->balance_btc, $amountBtc, 8);
             $wallet->save();
@@ -39,16 +39,17 @@ class TradeService
 
     public function sell(User $user, string $amountBtc): Transaction
     {
-        $btcPrice = $this->marketService->getBtcPrice();
-        $wallet   = $user->wallet;
+        $btcPrice  = $this->marketService->getBtcPrice();
 
-        if (bccomp($wallet->balance_btc, $amountBtc, 8) < 0) {
-            throw new RuntimeException('Saldo em BTC insuficiente.');
-        }
+        return DB::transaction(function () use ($user, $amountBtc, $btcPrice) {
+            $wallet = $user->wallet()->lockForUpdate()->first();
 
-        $amountBrl = number_format(round((float) $amountBtc * (float) $btcPrice, 2), 2, '.', '');
+            if (bccomp($wallet->balance_btc, $amountBtc, 8) < 0) {
+                throw new RuntimeException('Saldo em BTC insuficiente.');
+            }
 
-        return DB::transaction(function () use ($user, $wallet, $amountBtc, $amountBrl, $btcPrice) {
+            $amountBrl = number_format(round((float) $amountBtc * (float) $btcPrice, 2), 2, '.', '');
+
             $wallet->balance_btc = bcsub($wallet->balance_btc, $amountBtc, 8);
             $wallet->balance_brl = bcadd($wallet->balance_brl, $amountBrl, 2);
             $wallet->save();
